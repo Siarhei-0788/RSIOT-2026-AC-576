@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: web14-monitor
+  namespace: app-monitoring-230489-v14
+  labels:
+    release: monitoring
+    org.bstu.owner: Siarhei-0788
+    org.bstu.student.slug: as576-230489-v14
+spec:
+  selector:
+    matchLabels:
+      app: web14-app
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

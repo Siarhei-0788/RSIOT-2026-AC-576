@@ -1,0 +1,46 @@
+{{- if .Values.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "web14-app.name" . }}-alerts
+  namespace: {{ .Values.namespace }}
+  labels:
+    release: monitoring
+    {{- include "web14-app.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: {{ .Values.student.slug }}-slo
+      interval: 30s
+      rules:
+        - alert: High5xxErrorRate
+          expr: |
+            sum(rate({{ .Values.metrics.prefix }}http_requests_total{status=~"5.."}[10m]))
+            / sum(rate({{ .Values.metrics.prefix }}http_requests_total[10m])) > {{ div .Values.slo.errorRate 100.0 }}
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High 5xx error rate"
+            description: "Error rate is {{ $value | humanizePercentage }} > {{ .Values.slo.errorRate }}%"
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate({{ .Values.metrics.prefix }}http_request_duration_seconds_bucket[5m])) by (le)
+            ) > {{ .Values.slo.p95Latency }}
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "P95 latency exceeded SLO"
+            description: "P95 latency is {{ $value }}s > {{ .Values.slo.p95Latency }}s"
+        - alert: AvailabilityLow
+          expr: |
+            (sum(rate({{ .Values.metrics.prefix }}http_requests_total{status!~"5.."}[5m]))
+            / sum(rate({{ .Values.metrics.prefix }}http_requests_total[5m]))) < {{ div .Values.slo.availability 100.0 }}
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Availability below SLO"
+            description: "Availability is {{ $value | humanizePercentage }} < {{ .Values.slo.availability }}%"
+{{- end }}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web14-app
+  namespace: app-monitoring-230489-v14
+  labels:
+    app: web14-app
+    org.bstu.owner: Siarhei-0788
+    org.bstu.student.slug: as576-230489-v14
+spec:
+  selector:
+    app: web14-app
+  ports:
+  - port: 9062
+    targetPort: 9062
+    name: http
+  type: ClusterIP

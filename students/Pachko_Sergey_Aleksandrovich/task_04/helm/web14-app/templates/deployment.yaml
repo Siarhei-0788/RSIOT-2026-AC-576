@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "web14-app.name" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "web14-app.name" . }}
+    {{- include "web14-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "web14-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "web14-app.name" . }}
+    spec:
+      containers:
+      - name: app
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+          name: http
+        env:
+        - name: APP_PORT
+          value: "{{ .Values.service.targetPort }}"
+        - name: STU_ID
+          value: {{ .Values.student.id | quote }}
+        - name: STU_GROUP
+          value: {{ .Values.student.group | quote }}
+        - name: STU_VARIANT
+          value: {{ .Values.student.variant | quote }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10

@@ -1,0 +1,45 @@
+# Общие настройки
+namespace: app-monitoring-230489-v14
+replicaCount: 1
+
+# Настройки образа
+image:
+  repository: siarhei0788/lab4-app
+  tag: web14
+  pullPolicy: IfNotPresent
+
+# Настройки Service
+service:
+  port: 9062
+  targetPort: 9062
+  type: ClusterIP
+
+# Ресурсы
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 192Mi
+
+# Метрики и мониторинг
+metrics:
+  enabled: true
+  prefix: web14_
+  interval: 30s
+
+# SLO параметры для алертов
+slo:
+  availability: 99.6
+  p95Latency: 0.275
+  errorRate: 1.5
+
+# Метаданные студента
+student:
+  id: "230489"
+  group: "AS-576"
+  variant: "14"
+  fullname: "Pachko-Sergei-Alexandrovich"
+  owner: "Siarhei-0788"
+  slug: "as576-230489-v14"

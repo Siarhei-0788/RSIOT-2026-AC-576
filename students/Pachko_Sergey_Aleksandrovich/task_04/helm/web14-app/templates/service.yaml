@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "web14-app.name" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "web14-app.name" . }}
+    {{- include "web14-app.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ include "web14-app.name" . }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    name: http
+  type: {{ .Values.service.type }}

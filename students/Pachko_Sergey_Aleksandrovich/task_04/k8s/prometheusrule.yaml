@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: web14-alerts
+  namespace: app-monitoring-230489-v14
+  labels:
+    release: monitoring
+    org.bstu.owner: Siarhei-0788
+    org.bstu.student.slug: as576-230489-v14
+spec:
+  groups:
+    - name: web14-slo
+      interval: 30s
+      rules:
+        - alert: High5xxErrorRate
+          expr: |
+            sum(rate(web14_http_requests_total{status=~"5.."}[10m]))
+            / sum(rate(web14_http_requests_total[10m])) > 0.015
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High 5xx error rate"
+            description: "Error rate is {{ $value | humanizePercentage }} > 1.5% for 10 minutes"
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(web14_http_request_duration_seconds_bucket[5m])) by (le)
+            ) > 0.275
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "P95 latency exceeded SLO"
+            description: "P95 latency is {{ $value }}s > 0.275s"
+        - alert: AvailabilityLow
+          expr: |
+            (sum(rate(web14_http_requests_total{status!~"5.."}[5m]))
+            / sum(rate(web14_http_requests_total[5m]))) < 0.996
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Availability below SLO"
+            description: "Availability is {{ $value | humanizePercentage }} < 99.6%"
