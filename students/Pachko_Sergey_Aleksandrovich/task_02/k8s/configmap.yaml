@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app14-config
+  namespace: web14
+  labels:
+    org.bstu.owner: Siarhei-0788
+    org.bstu.student.slug: as576-230489-v14
+data:
+  APP_PORT: "9062"
+  STU_ID: "230489"
+  STU_GROUP: "AS-576"
+  STU_VARIANT: "14"

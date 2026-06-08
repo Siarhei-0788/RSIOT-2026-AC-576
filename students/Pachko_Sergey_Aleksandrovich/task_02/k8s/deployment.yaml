@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app14
+  namespace: web14
+  labels:
+    app: app14
+    org.bstu.student.fullname: Pachko-Sergei-Alexandrovich
+    org.bstu.student.id: "230489"
+    org.bstu.group: AS-576
+    org.bstu.variant: "14"
+    org.bstu.course: RSIOT
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: app14
+  template:
+    metadata:
+      labels:
+        app: app14
+    spec:
+      containers:
+      - name: app14
+        image: siarhei0788/lab1-v14:stu-230489-v14
+        ports:
+        - containerPort: 9062
+          name: http
+        envFrom:
+        - configMapRef:
+            name: app14-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 192Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9062
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 9062
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3

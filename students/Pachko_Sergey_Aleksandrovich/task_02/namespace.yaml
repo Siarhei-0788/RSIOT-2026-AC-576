@@ -1,0 +1,12 @@
+@'
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web14
+  labels:
+    org.bstu.student.fullname: "Пачко Сергей Александрович"
+    org.bstu.student.id: "230489"
+    org.bstu.group: "АС-576"
+    org.bstu.variant: "14"
+    org.bstu.course: "RSIOT"
+'@ | Out-File -FilePath "namespace.yaml" -Encoding utf8

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web14
+  labels:
+    org.bstu.student.fullname: Pachko-Sergei-Alexandrovich
+    org.bstu.student.id: "230489"
+    org.bstu.group: AS-576
+    org.bstu.variant: "14"
+    org.bstu.course: RSIOT

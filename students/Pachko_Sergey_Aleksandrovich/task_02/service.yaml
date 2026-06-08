@@ -1,0 +1,19 @@
+@'
+apiVersion: v1
+kind: Service
+metadata:
+  name: app14
+  namespace: web14
+  labels:
+    app: app14
+    org.bstu.owner: "Siarhei-0788"
+    org.bstu.student.slug: "as576-230489-v14"
+spec:
+  selector:
+    app: app14
+  ports:
+  - port: 9062
+    targetPort: 9062
+    name: http
+  type: ClusterIP
+'@ | Out-File -FilePath "service.yaml" -Encoding utf8
