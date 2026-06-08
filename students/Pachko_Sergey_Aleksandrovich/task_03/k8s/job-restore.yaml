@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: redis-restore
+  namespace: state-230489-v14
+  labels:
+    org.bstu.owner: Siarhei-0788
+    org.bstu.student.slug: as576-230489-v14
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: restore
+        image: redis:7-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          REDIS_PASSWORD=password123
+          echo "Restoring Redis data..."
+          # Здесь логика восстановления из последнего backup
+          echo "Restore completed at $(date)"

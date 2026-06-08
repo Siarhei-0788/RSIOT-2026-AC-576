@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: redis-backup
+  namespace: state-230489-v14
+  labels:
+    org.bstu.owner: Siarhei-0788
+    org.bstu.student.slug: as576-230489-v14
+spec:
+  schedule: "*/30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: redis:7-alpine
+            command:
+            - /bin/sh
+            - -c
+            - |
+              REDIS_PASSWORD=password123
+              redis-cli -h redis-0.redis-headless.state-230489-v14.svc.cluster.local -a ${REDIS_PASSWORD} SAVE
+              echo "Backup completed at $(date)"
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            emptyDir: {}
